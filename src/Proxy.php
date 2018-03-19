@@ -1,23 +1,25 @@
 <?php
 
 /**
- * @package   siddhantfriends/laravel-proxify
+ * @package   shokmaster/laravel-proxify
  * @author    Michele Andreoli <michi.andreoli[at]gmail.com>
  * @copyright Copyright (c) Michele Andreoli
  * @author    Rik Schreurs <rik.schreurs[at]mail.com>
  * @copyright Copyright (c) Rik Schreurs
  * @author    Siddhant Baviskar <siddhantfriends[at]yahoo.co.in>
  * @copyright Copyright (c) Siddhant Baviskar
+ * @author    Siddhant Baviskar <shokmaster[at]gmail.com>
+ * @copyright Copyright (c) Juan Antonio Gómez Benito
  * @license   http://mit-license.org/
- * @link      https://github.com/siddhantfriends/laravel-proxify
+ * @link      https://github.com/shokmaster/laravel-proxify
  */
 
-namespace Siddhantfriends\LaravelProxify;
+namespace Shokmaster\LaravelProxify;
 
-use Siddhantfriends\LaravelProxify\Exceptions\CookieExpiredException;
-use Siddhantfriends\LaravelProxify\Exceptions\ProxyMissingParamException;
-use Siddhantfriends\LaravelProxify\Managers\CookieManager;
-use Siddhantfriends\LaravelProxify\Managers\RequestManager;
+use Shokmaster\LaravelProxify\Exceptions\CookieExpiredException;
+use Shokmaster\LaravelProxify\Exceptions\ProxyMissingParamException;
+use Shokmaster\LaravelProxify\Managers\CookieManager;
+use Shokmaster\LaravelProxify\Managers\RequestManager;
 use Illuminate\Http\Response;
 
 class Proxy {
