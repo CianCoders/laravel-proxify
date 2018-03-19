@@ -2,43 +2,45 @@
 	"name": "shokmaster/laravel-proxify",
 	"description": "A Laravel proxy package for SPA javascript API calls",
 	"keywords": [
-	"laravel",
-	"API",
-	"ajax",
-	"proxy",
-	"javascript",
-	"oauth",
-    "proxify",
-    "client_secret",
-    "oauth2"
+		"laravel",
+		"API",
+		"ajax",
+		"proxy",
+		"javascript",
+		"oauth",
+		"proxify",
+		"client_secret",
+		"oauth2"
 	],
 	"authors": [
-		{
-			"name": "Michele Andreoli",
-			"email": "michi.andreoli@gmail.com"
-		},
-		{
-			"name": "Rik Schreurs",
-			"email": "Rik.schreurs@mail.com"
-		},
-        {
-            "name": "Siddhant Baviskar",
-            "email": "siddhantfriends@yahoo.co.in",
-            "role": "Developer, Forensic Investigator"
-        },
-        {
-            "name": "Juan Antonio Gómez Benito",
-            "email": "shokmaster@gmail.com",
-        }
-	],
-	"require": {
+	{
+		"name": "Michele Andreoli",
+		"email": "michi.andreoli@gmail.com"
+	},
+	{
+		"name": "Rik Schreurs",
+		"email": "Rik.schreurs@mail.com"
+	},
+	{
+		"name": "Siddhant Baviskar",
+		"email": "siddhantfriends@yahoo.co.in",
+		"role": "Developer, Forensic Investigator"
+	},
+	{
+		"name": "Juan Antonio Gómez Benito",
+		"email": "shokmaster@gmail.com"
+	}],
+	"require":
+	{
 		"php": ">=5.6.4",
 		"laravel/framework": "5.4.* || 5.5.* || 5.6.*",
 		"guzzlehttp/guzzle": "~6.0"
 	},
-	"autoload": {
-		"psr-4": {
-			"Shokmaster\\LaravelProxify\\":"src"
+	"autoload":
+	{
+		"psr-4":
+		{
+			"Shokmaster\\LaravelProxify\\": "src"
 		}
 	},
 	"license": "MIT"
