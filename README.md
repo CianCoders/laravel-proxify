@@ -1,3 +1,22 @@
+**NOTE** To use this unpublished package, add this lines to the composer.json file:
+
+```json
+    "require":
+    {
+        ...,
+        "shokmaster/laravel-proxify": "dev-master"
+    },
+
+    ...
+
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/shokmaster/laravel-proxify"
+        }
+    ]
+```
+
 Laravel 5.3 and 5.4 Proxy for OAuth
 ================
 
