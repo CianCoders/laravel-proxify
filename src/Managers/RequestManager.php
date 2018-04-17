@@ -16,13 +16,15 @@
 
 namespace Shokmaster\LaravelProxify\Managers;
 
-use Shokmaster\LaravelProxify\ProxyAux;
-use Shokmaster\LaravelProxify\Models\ProxyResponse;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Stream\Stream;
 use Shokmaster\LaravelProxify\Exceptions\MissingClientSecretException;
+use Shokmaster\LaravelProxify\Models\ProxyResponse;
+use Shokmaster\LaravelProxify\ProxyAux;
 
-class RequestManager {
+class RequestManager
+{
 
     private $uri = null;
     private $method = null;
@@ -35,7 +37,8 @@ class RequestManager {
      * @param string $callMode
      * @param CookieManager $cookieManager
      */
-    public function __construct($uri, $method, $clientSecrets, $callMode, $cookieManager) {
+    public function __construct($uri, $method, $clientSecrets, $callMode, $cookieManager)
+    {
         $this->uri = $uri;
         $this->method = $method;
         $this->clientSecrets = $clientSecrets;
@@ -43,7 +46,8 @@ class RequestManager {
         $this->cookieManager = $cookieManager;
     }
 
-    public function enableHeader() {
+    public function enableHeader()
+    {
         $this->useHeader = true;
     }
 
@@ -52,7 +56,8 @@ class RequestManager {
      * @param $parsedCookie
      * @return array
      */
-    public function executeRequest($inputs, $parsedCookie) {
+    public function executeRequest($inputs, $parsedCookie)
+    {
         $cookie = null;
         switch ($this->callMode) {
             case ProxyAux::MODE_LOGIN:
@@ -87,7 +92,6 @@ class RequestManager {
             default:
                 $proxyResponse = $this->replicateRequest($this->method, $this->uri, $inputs);
         }
-
         return array(
             'response' => $proxyResponse,
             'cookie' => $cookie
@@ -96,10 +100,144 @@ class RequestManager {
 
     /**
      * @param $inputs
+     * @return array
+     */
+    private function addLoginExtraParams($inputs)
+    {
+        //Get client secret key
+        $clientId = (array_key_exists(ProxyAux::CLIENT_ID, $inputs)) ? $inputs[ProxyAux::CLIENT_ID] : null;
+        $clientInfo = $this->getClientInfo($clientId);
+
+        if (isset($clientInfo['id'])) {
+            $inputs = ProxyAux::addQueryValue($inputs, ProxyAux::CLIENT_ID, $clientInfo['id']);
+        }
+        if (isset($clientInfo['secret'])) {
+            $inputs = ProxyAux::addQueryValue($inputs, ProxyAux::CLIENT_SECRET, $clientInfo['secret']);
+        }
+
+        return $inputs;
+    }
+
+    /**
+     * @param $clientId
+     * @return array
+     * @throws MissingClientSecretException
+     */
+    private function getClientInfo($clientId)
+    {
+        $info = ['id' => null, 'secret' => null];
+
+        if (isset($clientId)) {
+            if (!array_key_exists($clientId, $this->clientSecrets)) {
+                throw new MissingClientSecretException($clientId);
+            }
+            $info['id'] = $clientId;
+            $info['secret'] = $this->clientSecrets[$clientId];
+        } else if (count($this->clientSecrets) >= 1) {
+            $firstKey = key($this->clientSecrets);
+            $info['id'] = $firstKey;
+            $info['secret'] = $this->clientSecrets[$firstKey];
+        }
+
+        return $info;
+    }
+
+    /**
+     * @param $method
+     * @param $uri
+     * @param $inputs
+     * @return ProxyResponse
+     */
+    private function replicateRequest($method, $uri, $inputs)
+    {
+        $guzzleResponse = $this->sendGuzzleRequest($method, $uri, $inputs);
+        $proxyResponse = new ProxyResponse($guzzleResponse->getStatusCode(), $guzzleResponse->getReasonPhrase(), $guzzleResponse->getProtocolVersion(), $this->getResponseContent($guzzleResponse));
+//        echo("si llega hasta aqui");
+//        var_dump($proxyResponse);
+        return $proxyResponse;
+    }
+
+    /**
+     * @param $method
+     * @param $uriVal
+     * @param $inputs
+     * @return \GuzzleHttp\Message\ResponseInterface
+     */
+    private function sendGuzzleRequest($method, $uriVal, $inputs)
+    {
+        $options = array();
+        $client = new Client();
+
+        if ($this->callMode === ProxyAux::MODE_TOKEN && $this->useHeader === true) {
+            $accessToken = ProxyAux::getQueryValue($inputs, ProxyAux::ACCESS_TOKEN);
+            $inputs = ProxyAux::removeQueryValue($inputs, ProxyAux::ACCESS_TOKEN);
+            $options = array_add($options, 'headers', [ProxyAux::HEADER_AUTH => 'Bearer ' . $accessToken]);
+        }
+
+        if ($method === 'GET') {
+            $options = array_add($options, 'query', $inputs);
+        } else {
+            $options = array_add($options, 'form_params', $inputs);
+//            $options = array_add($options, 'body', $inputs); // <------ Deprecated
+        }
+//        $request = $client->createRequest($method, $uriVal, $options); //How Guzzle v5.x send the request
+//        $request = new GuzzleHttp\Psr7\Request($method, $uriVal, $headers, $body); //How Guzzle v6 send the request but idk how to send the body structure, so i used the if for the method, down below.
+        try {
+            if ($method === 'GET') {
+                $response = $client->get($uriVal, $options);
+            } elseif ($method === 'POST') {
+                $response = $client->post($uriVal, $options);
+            } elseif ($method === 'HEAD') {
+                $response = $client->head($uriVal, $options);
+            } elseif ($method === 'PUT') {
+                $response = $client->put($uriVal, $options);
+            } elseif ($method === 'DELETE') {
+                $response = $client->delete($uriVal, $options);
+            } elseif ($method === 'PATCH') {
+                $response = $client->patch($uriVal, $options);
+            }
+        } catch (ClientException $ex) {
+            $response = $ex->getResponse();
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param \GuzzleHttp\Message\ResponseInterface $response
+     * @return mixed
+     */
+    private function getResponseContent($response)
+    {
+        $content_type = $response->getHeader('content-type')[0];
+        if (strpos($content_type, 'application/json') >= 0) {
+            return json_decode($response->getBody(), true);
+        } else {
+            return (string)$response->getBody();
+        }
+    }
+
+    /**
+     * @param $inputs
      * @param $parsedCookie
      * @return array
      */
-    private function tryRefreshToken($inputs, $parsedCookie) {
+    private function addTokenExtraParams($inputs, $parsedCookie)
+    {
+        if (isset($parsedCookie[ProxyAux::ACCESS_TOKEN])) {
+            $inputs = ProxyAux::addQueryValue($inputs, ProxyAux::ACCESS_TOKEN, $parsedCookie[ProxyAux::ACCESS_TOKEN]);
+        }
+
+        return $inputs;
+    }
+
+    /**
+     * @param $inputs
+     * @param $parsedCookie
+     * @return array
+     */
+    private function tryRefreshToken($inputs, $parsedCookie)
+    {
         $this->callMode = ProxyAux::MODE_REFRESH;
 
         //Get a new access token from refresh token
@@ -129,105 +267,12 @@ class RequestManager {
     }
 
     /**
-     * @param $method
-     * @param $uri
-     * @param $inputs
-     * @return ProxyResponse
-     */
-    private function replicateRequest($method, $uri, $inputs) {
-        $guzzleResponse = $this->sendGuzzleRequest($method, $uri, $inputs);
-        $proxyResponse = new ProxyResponse($guzzleResponse->getStatusCode(), $guzzleResponse->getReasonPhrase(), $guzzleResponse->getProtocolVersion(), $this->getResponseContent($guzzleResponse));
-
-        return $proxyResponse;
-    }
-
-    /**
-     * @param \GuzzleHttp\Message\ResponseInterface $response
-     * @return mixed
-     */
-    private function getResponseContent($response) {
-        switch ($response->getHeader('content-type')) {
-            case 'application/json':
-                return $response->json();
-            case 'text/xml':
-            case 'application/xml':
-                return $response->xml();
-            default:
-                return $response->getBody();
-        }
-    }
-
-    /**
-     * @param $method
-     * @param $uriVal
-     * @param $inputs
-     * @return \GuzzleHttp\Message\ResponseInterface
-     */
-    private function sendGuzzleRequest($method, $uriVal, $inputs) {
-        $options = array();
-        $client = new Client();
-
-        if ($this->callMode === ProxyAux::MODE_TOKEN && $this->useHeader === true) {
-            $accessToken = ProxyAux::getQueryValue($inputs, ProxyAux::ACCESS_TOKEN);
-            $inputs = ProxyAux::removeQueryValue($inputs, ProxyAux::ACCESS_TOKEN);
-            $options = array_add($options, 'headers', [ProxyAux::HEADER_AUTH => 'Bearer ' . $accessToken]);
-        }
-
-        if ($method === 'GET') {
-            $options = array_add($options, 'query', $inputs);
-        } else {
-            $options = array_add($options, 'body', $inputs);
-        }
-
-        $request = $client->createRequest($method, $uriVal, $options);
-
-        try {
-            $response = $client->send($request);
-        } catch (ClientException $ex) {
-            $response = $ex->getResponse();
-        }
-
-        return $response;
-    }
-
-    /**
-     * @param $clientId
-     * @return array
-     * @throws MissingClientSecretException
-     */
-    private function getClientInfo($clientId) {
-        $info = ['id' => null, 'secret' => null];
-
-        if (isset($clientId)) {
-            if (!array_key_exists($clientId, $this->clientSecrets)) {
-                throw new MissingClientSecretException($clientId);
-            }
-            $info['id'] = $clientId;
-            $info['secret'] = $this->clientSecrets[$clientId];
-        } else if (count($this->clientSecrets) >= 1) {
-            $firstKey = key($this->clientSecrets);
-            $info['id'] = $firstKey;
-            $info['secret'] = $this->clientSecrets[$firstKey];
-        }
-
-        return $info;
-    }
-
-    /**
      * @param $inputs
      * @return array
      */
-    private function addLoginExtraParams($inputs) {
-        //Get client secret key
-        $clientId = (array_key_exists(ProxyAux::CLIENT_ID, $inputs)) ? $inputs[ProxyAux::CLIENT_ID] : null;
-        $clientInfo = $this->getClientInfo($clientId);
-
-        if (isset($clientInfo['id'])) {
-            $inputs = ProxyAux::addQueryValue($inputs, ProxyAux::CLIENT_ID, $clientInfo['id']);
-        }
-        if (isset($clientInfo['secret'])) {
-            $inputs = ProxyAux::addQueryValue($inputs, ProxyAux::CLIENT_SECRET, $clientInfo['secret']);
-        }
+    private function removeTokenExtraParams($inputs)
+    {
+        $inputs = ProxyAux::removeQueryValue($inputs, ProxyAux::ACCESS_TOKEN);
 
         return $inputs;
     }
@@ -237,20 +282,8 @@ class RequestManager {
      * @param $parsedCookie
      * @return array
      */
-    private function addTokenExtraParams($inputs, $parsedCookie) {
-        if (isset($parsedCookie[ProxyAux::ACCESS_TOKEN])) {
-            $inputs = ProxyAux::addQueryValue($inputs, ProxyAux::ACCESS_TOKEN, $parsedCookie[ProxyAux::ACCESS_TOKEN]);
-        }
-
-        return $inputs;
-    }
-
-    /**
-     * @param $inputs
-     * @param $parsedCookie
-     * @return array
-     */
-    private function addRefreshExtraParams($inputs, $parsedCookie) {
+    private function addRefreshExtraParams($inputs, $parsedCookie)
+    {
         $inputs = ProxyAux::addQueryValue($inputs, ProxyAux::GRANT_TYPE, ProxyAux::REFRESH_TOKEN);
         $inputs = ProxyAux::addQueryValue($inputs, ProxyAux::REFRESH_TOKEN, $parsedCookie[ProxyAux::REFRESH_TOKEN]);
         if (isset($parsedCookie[ProxyAux::CLIENT_ID])) {
@@ -262,16 +295,6 @@ class RequestManager {
                 $inputs = ProxyAux::addQueryValue($inputs, ProxyAux::CLIENT_SECRET, $clientInfo['secret']);
             }
         }
-
-        return $inputs;
-    }
-
-    /**
-     * @param $inputs
-     * @return array
-     */
-    private function removeTokenExtraParams($inputs) {
-        $inputs = ProxyAux::removeQueryValue($inputs, ProxyAux::ACCESS_TOKEN);
 
         return $inputs;
     }

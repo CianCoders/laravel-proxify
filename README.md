@@ -4,7 +4,7 @@
     "require":
     {
         ...,
-        "shokmaster/laravel-proxify": "dev-master"
+        "CianCoders/laravel-proxify": "dev-master"
     },
 
     ...
@@ -12,7 +12,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/shokmaster/laravel-proxify"
+            "url": "https://github.com/CianCoders/laravel-proxify"
         }
     ]
 ```

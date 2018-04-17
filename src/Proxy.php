@@ -16,6 +16,7 @@
 
 namespace Shokmaster\LaravelProxify;
 
+use function GuzzleHttp\Psr7\str;
 use Shokmaster\LaravelProxify\Exceptions\CookieExpiredException;
 use Shokmaster\LaravelProxify\Exceptions\ProxyMissingParamException;
 use Shokmaster\LaravelProxify\Managers\CookieManager;
@@ -80,7 +81,6 @@ class Proxy {
             $requestManager->enableHeader();
         }
         $proxyResponse = $requestManager->executeRequest($inputs, $parsedCookie);
-
         return $this->setApiResponse($proxyResponse['response'], $proxyResponse['cookie']);
     }
 

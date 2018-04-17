@@ -16,18 +16,20 @@
 
 namespace Shokmaster\LaravelProxify\Managers;
 
+use Illuminate\Support\Facades\Cookie;
 use Shokmaster\LaravelProxify\Exceptions\CookieExpiredException;
 use Shokmaster\LaravelProxify\Exceptions\CookieInvalidException;
-use Illuminate\Support\Facades\Cookie;
 use Shokmaster\LaravelProxify\ProxyAux;
 
-class CookieManager {
+class CookieManager
+{
 
     const COOKIE_NAME = 'name';
     const COOKIE_TIME = 'time';
     private $info = null;
 
-    public function __construct($info) {
+    public function __construct($info)
+    {
         $this->info = $info;
     }
 
@@ -37,7 +39,8 @@ class CookieManager {
      * @throws CookieExpiredException
      * @throws CookieInvalidException
      */
-    public function tryParseCookie($callMode) {
+    public function tryParseCookie($callMode)
+    {
         $parsedCookie = Cookie::get($this->info[CookieManager::COOKIE_NAME]);
 
         if (isset($parsedCookie)) {
@@ -56,20 +59,21 @@ class CookieManager {
      * @param array $content
      * @return mixed
      */
-    public function createCookie(Array $content) {
+    public function createCookie(Array $content)
+    {
         if (!isset($this->info[CookieManager::COOKIE_TIME]) || $this->info[CookieManager::COOKIE_TIME] == null) {
             $cookie = Cookie::forever($this->info[CookieManager::COOKIE_NAME], json_encode($content));
         } else {
             $cookie = Cookie::make($this->info[CookieManager::COOKIE_NAME], json_encode($content), $this->info[CookieManager::COOKIE_TIME]);
         }
-
         return $cookie;
     }
 
     /**
      * @return mixed
      */
-    public function destroyCookie() {
+    public function destroyCookie()
+    {
         return Cookie::forget($this->info[CookieManager::COOKIE_NAME]);
     }
 
@@ -78,7 +82,8 @@ class CookieManager {
      * @return bool
      * @throws CookieInvalidException
      */
-    public function validateCookie($parsedCookie) {
+    public function validateCookie($parsedCookie)
+    {
         if (!isset($parsedCookie) || !array_key_exists(ProxyAux::ACCESS_TOKEN, $parsedCookie)) {
             throw new CookieInvalidException(ProxyAux::ACCESS_TOKEN);
         }
