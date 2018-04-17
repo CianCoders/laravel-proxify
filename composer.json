@@ -1,5 +1,5 @@
 {
-  "name": "shokmaster/laravel-proxify",
+  "name": "CianCoders/laravel-proxify",
   "description": "A Laravel proxy package for SPA javascript API calls",
   "keywords": [
     "laravel",
@@ -43,7 +43,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Shokmaster\\LaravelProxify\\": "src"
+      "CianCoders\\LaravelProxify\\": "src"
     }
   },
   "license": "MIT"
