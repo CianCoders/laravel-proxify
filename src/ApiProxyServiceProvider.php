@@ -16,7 +16,7 @@
  * @link      https://github.com/CianCoders/laravel-proxify
  */
 
-namespace Shokmaster\LaravelProxify;
+namespace CianCoders\LaravelProxify;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\JsonResponse;

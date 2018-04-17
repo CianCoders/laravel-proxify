@@ -16,7 +16,7 @@
  * @link      https://github.com/CianCoders/laravel-proxify
  */
 
-namespace Shokmaster\LaravelProxify;
+namespace CianCoders\LaravelProxify;
 
 use function GuzzleHttp\Psr7\str;
 use Shokmaster\LaravelProxify\Exceptions\CookieExpiredException;

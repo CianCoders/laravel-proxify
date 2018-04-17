@@ -16,7 +16,7 @@
  * @link      https://github.com/CianCoders/laravel-proxify
  */
 
-namespace Shokmaster\LaravelProxify;
+namespace CianCoders\LaravelProxify;
 
 class ProxyAux {
 
