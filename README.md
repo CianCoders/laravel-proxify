@@ -21,8 +21,8 @@ Laravel 5.3 and 5.4 Proxy for OAuth
 ================
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://travis-ci.org/shokmaster/laravel-proxify.svg?branch=master)](https://travis-ci.org/shokmaster/laravel-proxify)
-[![Total Downloads](https://img.shields.io/packagist/dt/shokmaster/laravel-proxify.svg?style=flat-square)](https://packagist.org/packages/shokmaster/laravel-proxify)
+[![Build Status](https://travis-ci.org/Ciancoders/laravel-proxify.svg?branch=master)](https://travis-ci.org/Ciancoders/laravel-proxify)
+[![Total Downloads](https://img.shields.io/packagist/dt/Ciancoders/laravel-proxify.svg?style=flat-square)](https://packagist.org/packages/Ciancoders/laravel-proxify)
 
 ## Summary
  
@@ -192,20 +192,20 @@ http://alexbilbie.com/2014/11/oauth-and-javascript
 Run the following `composer` command:
 
 ```
-composer require shokmaster/laravel-proxify
+composer require Ciancoders/laravel-proxify
 ```
 
 ## Setup
 
-1. Add `Shokmaster\LaravelProxify\ApiProxyServiceProvider::class,` to the service provider list in `config/app.php`.
-2. Add `'Proxify' => Shokmaster\LaravelProxify\Facades\ApiProxyFacade::class,` to the list of aliases in `config/app.php`.
+1. Add `Ciancoders\LaravelProxify\ApiProxyServiceProvider::class,` to the service provider list in `config/app.php`.
+2. Add `'Proxify' => Ciancoders\LaravelProxify\Facades\ApiProxyFacade::class,` to the list of aliases in `config/app.php`.
 
 ## Configuration
 
 In order to use the Api Proxy publish its configuration first
 
 ```
-php artisan vendor:publish --provider="Shokmaster\LaravelProxify\ApiProxyServiceProvider"
+php artisan vendor:publish --provider="Ciancoders\LaravelProxify\ApiProxyServiceProvider"
 ```
 
 Afterwards edit the file ```app/config/proxy.php``` to suit your needs.
