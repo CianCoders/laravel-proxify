@@ -16,7 +16,7 @@
  * @link      https://github.com/CianCoders/laravel-proxify
  */
 
-namespace Shokmaster\LaravelProxify\Facades;
+namespace CianCoders\LaravelProxify\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

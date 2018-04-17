@@ -16,12 +16,12 @@
  * @link      https://github.com/CianCoders/laravel-proxify
  */
 
-namespace Shokmaster\LaravelProxify\Managers;
+namespace CianCoders\LaravelProxify\Managers;
 
 use Illuminate\Support\Facades\Cookie;
-use Shokmaster\LaravelProxify\Exceptions\CookieExpiredException;
-use Shokmaster\LaravelProxify\Exceptions\CookieInvalidException;
-use Shokmaster\LaravelProxify\ProxyAux;
+use CianCoders\LaravelProxify\Exceptions\CookieExpiredException;
+use CianCoders\LaravelProxify\Exceptions\CookieInvalidException;
+use CianCoders\LaravelProxify\ProxyAux;
 
 class CookieManager
 {

@@ -20,7 +20,7 @@ namespace CianCoders\LaravelProxify;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\JsonResponse;
-use Shokmaster\LaravelProxify\Exceptions\ProxyException;
+use CianCoders\LaravelProxify\Exceptions\ProxyException;
 
 class ApiProxyServiceProvider extends ServiceProvider {
 
@@ -64,7 +64,7 @@ class ApiProxyServiceProvider extends ServiceProvider {
             return $proxy;
         });
 
-        $this->app->bind('Shokmaster\LaravelProxify\Proxy', function($app) {
+        $this->app->bind('CianCoders\LaravelProxify\Proxy', function($app) {
             return $app['api-proxy.proxy'];
         });
     }

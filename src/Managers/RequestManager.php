@@ -16,14 +16,14 @@
  * @link      https://github.com/CianCoders/laravel-proxify
  */
 
-namespace Shokmaster\LaravelProxify\Managers;
+namespace CianCoders\LaravelProxify\Managers;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Stream\Stream;
-use Shokmaster\LaravelProxify\Exceptions\MissingClientSecretException;
-use Shokmaster\LaravelProxify\Models\ProxyResponse;
-use Shokmaster\LaravelProxify\ProxyAux;
+use CianCoders\LaravelProxify\Exceptions\MissingClientSecretException;
+use CianCoders\LaravelProxify\Models\ProxyResponse;
+use CianCoders\LaravelProxify\ProxyAux;
 
 class RequestManager
 {

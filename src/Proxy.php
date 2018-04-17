@@ -19,10 +19,10 @@
 namespace CianCoders\LaravelProxify;
 
 use function GuzzleHttp\Psr7\str;
-use Shokmaster\LaravelProxify\Exceptions\CookieExpiredException;
-use Shokmaster\LaravelProxify\Exceptions\ProxyMissingParamException;
-use Shokmaster\LaravelProxify\Managers\CookieManager;
-use Shokmaster\LaravelProxify\Managers\RequestManager;
+use CianCoders\LaravelProxify\Exceptions\CookieExpiredException;
+use CianCoders\LaravelProxify\Exceptions\ProxyMissingParamException;
+use CianCoders\LaravelProxify\Managers\CookieManager;
+use CianCoders\LaravelProxify\Managers\RequestManager;
 use Illuminate\Http\Response;
 
 class Proxy {

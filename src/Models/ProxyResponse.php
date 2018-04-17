@@ -16,7 +16,7 @@
  * @link      https://github.com/CianCoders/laravel-proxify
  */
 
-namespace Shokmaster\LaravelProxify\Models;
+namespace CianCoders\LaravelProxify\Models;
 
 class ProxyResponse {
 

@@ -16,7 +16,7 @@
  * @link      https://github.com/CianCoders/laravel-proxify
  */
 
-namespace Shokmaster\LaravelProxify\Exceptions;
+namespace CianCoders\LaravelProxify\Exceptions;
 
 /**
  * Exception class
